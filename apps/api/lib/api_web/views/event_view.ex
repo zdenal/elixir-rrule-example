@@ -11,7 +11,11 @@ defmodule ApiWeb.EventView do
   end
 
   def render("event.json", %{event: event}) do
-    %{id: event.id,
-      title: event.title}
+    %{
+      id: event.id,
+      title: event.title,
+      start_time: event.start_time,
+      end_time: event.end_time
+    }
   end
 end

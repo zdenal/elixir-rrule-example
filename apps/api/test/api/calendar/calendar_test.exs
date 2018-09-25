@@ -12,7 +12,6 @@ defmodule Api.CalendarTest do
       {:ok, event} = Db.DataCase.fixture(:event, %{
         start_time: start_time,
         end_time: end_time,
-        until: nil,
         rrule: RruleChecker.rrule(%{from: start_time, until: end_time, freq: :daily})
       })
 

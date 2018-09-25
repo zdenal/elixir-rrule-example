@@ -6,9 +6,11 @@ defmodule ApiWeb.EventController do
 
   action_fallback ApiWeb.FallbackController
 
-  def index(conn, _params) do
-    #events = Calendar.list_events()
-    events = []
+  def index(conn, %{"from" => from, "to" => to}) do
+    {:ok, from} = NaiveDateTime.from_iso8601(from)
+    {:ok, to} = NaiveDateTime.from_iso8601(to)
+
+    events = Calendar.events_between(from, to)
     render(conn, "index.json", events: events)
   end
 
