@@ -3,7 +3,7 @@ defmodule RruleChecker do
   Documentation for RruleChecker.
   """
 
-  alias Cocktail.Parser
+  alias Cocktail.{Parser, Builder}
   alias Cocktail.Schedule
 
   @type event :: {non_neg_integer(), map()}
@@ -18,6 +18,13 @@ defmodule RruleChecker do
     |> Enum.filter(&not_empty?/1)
   end
 
+  def rrule(%{from: from, until: until, freq: freq}) when freq in [:daily, :weekly] do
+    Schedule.new(from)
+    |> Schedule.add_recurrence_rule(freq, until: until)
+    |> Builder.ICalendar.build()
+  end
+  def rrule(_rule), do: {:error, :argument_error}
+
   defp parse({id, rrule}) do
     case Parser.ICalendar.parse(rrule) do
       {:ok, schedule} -> {id, schedule}
@@ -26,7 +33,12 @@ defmodule RruleChecker do
   end
 
   defp change_until({id, schedule}, to) do
-    {id, schedule |> Schedule.end_all_recurrence_rules(to)}
+    rule = Enum.find(schedule.recurrence_rules, to, fn rule -> rule.until != nil end)
+
+    case rule.until > to do
+      true -> {id, schedule |> Schedule.end_all_recurrence_rules(to)}
+      false -> {id, schedule}
+    end
   end
 
   defp get_occurrences({id, schedule}, from) do

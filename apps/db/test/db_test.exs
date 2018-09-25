@@ -3,11 +3,6 @@ defmodule DbTest do
 
   alias Db.Event
 
-  def fixture(:event, attrs) do
-    Map.merge(%{title: "title", duration: 3600}, attrs)
-    |> Db.create_event()
-  end
-
   describe "#create_event" do
     test "when event is invalid" do
       assert {:error, changeset} = fixture(:event, %{title: nil, duration: nil})

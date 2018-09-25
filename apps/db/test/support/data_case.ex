@@ -50,5 +50,9 @@ defmodule Db.DataCase do
       end)
     end)
   end
-end
 
+  def fixture(:event, attrs) do
+    Map.merge(%{title: "title", duration: 3600}, attrs)
+    |> Db.create_event()
+  end
+end
